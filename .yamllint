@@ -5,7 +5,7 @@ rules:
     level: warning
   truthy:
     level: warning
-    allowed-values: ['true', 'false', 'yes', 'no']
+    allowed-values: ['true', 'false', 'yes', 'no', 'True', 'False']
   brackets:
     min-spaces-inside: 0
     max-spaces-inside: 2

@@ -8,10 +8,10 @@ common_base_packages:
   - wget
   - chrony
 
-common_extra_packages: []
-node_exporter_enabled: true
-node_exporter_version: "1.8.1"
-app_user: env_app
-app_group: env_app
-log_dir: /var/log/apps
-timezone: UTC
+env_common_extra_packages: []
+env_node_exporter_enabled: true
+env_node_exporter_version: "1.8.1"
+env_app_user: app
+env_app_group: app
+env_log_dir: /var/log/apps
+env_timezone: UTC
