@@ -1,3 +1,4 @@
+---
 plugin: gcp_compute
 projects:
   - YOUR_GCP_PROJECT_ID

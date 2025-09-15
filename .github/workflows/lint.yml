@@ -1,3 +1,4 @@
+---
 name: Lint Ansible
 on:
   push:

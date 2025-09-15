@@ -16,3 +16,4 @@ ignore:
   - inventories/*
 skip_list:
   - yaml[document-start]
+  - var-naming[no-role-prefix]
