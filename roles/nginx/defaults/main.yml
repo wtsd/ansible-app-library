@@ -1,0 +1,5 @@
+---
+nginx_listen_port: 80
+nginx_server_name: "{{ domain_name | default(ansible_fqdn) }}"
+nginx_upstreams: []
+# example: nginx_upstreams: [{name: "python_upstream", servers: ["127.0.0.1:5000"]}]

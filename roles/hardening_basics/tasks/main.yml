@@ -1,0 +1,17 @@
+---
+- name: Harden SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin\s+'
+    line: "PermitRootLogin {{ ssh_permit_root_login }}"
+    create: no
+    backup: yes
+  notify: Restart sshd
+
+- name: Ensure sudoers group NOPASSWD (optional)
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/90-wheel-nopasswd
+    mode: "0440"
+    content: |
+      %wheel ALL=(ALL) NOPASSWD: ALL
+  when: sudo_nopasswd_groups | length > 0

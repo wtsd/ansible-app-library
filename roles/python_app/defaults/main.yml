@@ -1,0 +1,10 @@
+---
+python_version: "3.10"
+python_app:
+  name: myapp
+  repo_url: ""
+  venv_path: "/opt/venvs/myapp"
+  entrypoint: "wsgi:app"
+  port: 5000
+deploy_dir: /opt/apps
+service_restart_on_change: true

@@ -1,0 +1,67 @@
+---
+- name: Ensure deploy and venv dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+  loop:
+    - "{{ deploy_dir }}/{{ python_app.name }}"
+    - "{{ python_app.venv_path }}"
+
+- name: Install Python runtime
+  ansible.builtin.package:
+    name:
+      - "python{{ python_version.split('.')[0] }}{{ python_version.split('.')[1] }}"
+      - python3-pip
+    state: present
+  ignore_errors: true
+
+- name: Ensure pip/venv present
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+
+- name: Create venv
+  ansible.builtin.command:
+    cmd: "python3 -m venv {{ python_app.venv_path }}"
+    creates: "{{ python_app.venv_path }}/bin/activate"
+
+- name: Checkout app (git) if repo_url provided
+  when: python_app.repo_url | length > 0
+  ansible.builtin.git:
+    repo: "{{ python_app.repo_url }}"
+    dest: "{{ deploy_dir }}/{{ python_app.name }}"
+    version: HEAD
+    force: yes
+    accept_hostkey: yes
+
+- name: Install requirements.txt if present
+  ansible.builtin.shell: |
+    set -euo pipefail
+    if [[ -f requirements.txt ]]; then
+      {{ python_app.venv_path }}/bin/pip install --upgrade pip
+      {{ python_app.venv_path }}/bin/pip install -r requirements.txt
+    fi
+  args:
+    chdir: "{{ deploy_dir }}/{{ python_app.name }}"
+  register: pip_out
+  changed_when: "'Successfully installed' in pip_out.stdout or 'Installing collected packages' in pip_out.stdout"
+  failed_when: false
+
+- name: Create systemd unit for gunicorn
+  ansible.builtin.template:
+    src: gunicorn.service.j2
+    dest: "/etc/systemd/system/{{ python_app.name }}.service"
+    mode: "0644"
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start app
+  ansible.builtin.service:
+    name: "{{ python_app.name }}"
+    state: restarted
+    enabled: true

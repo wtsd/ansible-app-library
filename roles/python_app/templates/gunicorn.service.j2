@@ -1,0 +1,14 @@
+[Unit]
+Description={{ python_app.name }} (gunicorn)
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ deploy_dir }}/{{ python_app.name }}
+Environment="PATH={{ python_app.venv_path }}/bin"
+ExecStart={{ python_app.venv_path }}/bin/gunicorn --workers 2 --bind 127.0.0.1:{{ python_app.port }} {{ python_app.entrypoint }}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

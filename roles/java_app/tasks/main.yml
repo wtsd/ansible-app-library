@@ -1,0 +1,49 @@
+---
+- name: Install Java
+  ansible.builtin.package:
+    name: "{{ java_package }}"
+    state: present
+
+- name: Ensure deploy dir
+  ansible.builtin.file:
+    path: "{{ deploy_dir }}/{{ java_app.name }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Download JAR (if provided)
+  when: java_app.jar_url | length > 0
+  ansible.builtin.get_url:
+    url: "{{ java_app.jar_url }}"
+    dest: "{{ deploy_dir }}/{{ java_app.name }}/app.jar"
+    mode: "0644"
+
+- name: Create systemd unit
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system/{{ java_app.name }}.service"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description={{ java_app.name }} (Java)
+      After=network.target
+
+      [Service]
+      User={{ app_user }}
+      Group={{ app_group }}
+      WorkingDirectory={{ deploy_dir }}/{{ java_app.name }}
+      ExecStart=/usr/bin/java -jar app.jar --server.port={{ java_app.port }}
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start
+  ansible.builtin.service:
+    name: "{{ java_app.name }}"
+    state: restarted
+    enabled: true

@@ -1,0 +1,23 @@
+upstream python_upstream {
+    server 127.0.0.1:5000;
+}
+upstream java_upstream {
+    server 127.0.0.1:8080;
+}
+
+server {
+    listen {{ nginx_listen_port }};
+    server_name {{ nginx_server_name }};
+
+    location /py/ {
+        proxy_pass http://python_upstream/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /java/ {
+        proxy_pass http://java_upstream/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

@@ -1,0 +1,20 @@
+---
+- name: Manage firewalld
+  when: enable_firewalld | bool
+  block:
+    - name: Install firewalld
+      ansible.builtin.package:
+        name: firewalld
+        state: present
+    - name: Enable firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
+    - name: Open ports
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: true
+      loop: "{{ firewall_allowed_ports }}"

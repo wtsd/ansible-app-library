@@ -1,0 +1,3 @@
+---
+ssh_permit_root_login: "no"
+sudo_nopasswd_groups: ["wheel"]

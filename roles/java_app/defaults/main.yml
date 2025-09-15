@@ -1,0 +1,8 @@
+---
+java_package: "java-11-openjdk"
+java_app:
+  name: myjava
+  jar_url: ""
+  port: 8080
+deploy_dir: /opt/apps
+service_restart_on_change: true

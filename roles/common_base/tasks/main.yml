@@ -1,0 +1,90 @@
+---
+- name: Detect package manager
+  ansible.builtin.set_fact:
+    pkg_mgr: "{{ 'dnf' if (ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version|int >= 8) else 'yum' }}"
+
+- name: Ensure groups/users exist
+  ansible.builtin.group:
+    name: "{{ app_group }}"
+    state: present
+
+- name: Create app user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+    create_home: false
+    shell: /sbin/nologin
+
+- name: Create log dir
+  ansible.builtin.file:
+    path: "{{ log_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Install base packages
+  ansible.builtin.package:
+    name: "{{ common_base_packages + common_extra_packages }}"
+    state: present
+
+- name: Enable time sync
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Install node_exporter (optional)
+  when: node_exporter_enabled | bool
+  block:
+    - name: Create node_exporter user
+      ansible.builtin.user:
+        name: nodeexp
+        shell: /sbin/nologin
+        system: yes
+        create_home: no
+
+    - name: Download node_exporter
+      ansible.builtin.unarchive:
+        src: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: /opt
+        remote_src: yes
+        creates: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64"
+
+    - name: Symlink binary
+      ansible.builtin.file:
+        src: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+        dest: /usr/local/bin/node_exporter
+        state: link
+
+    - name: Systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/node_exporter.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Prometheus Node Exporter
+          After=network.target
+
+          [Service]
+          User=nodeexp
+          Group=nodeexp
+          ExecStart=/usr/local/bin/node_exporter
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable node_exporter
+      ansible.builtin.service:
+        name: node_exporter
+        state: started
+        enabled: true
