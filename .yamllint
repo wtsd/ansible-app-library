@@ -13,6 +13,6 @@ rules:
 ignore:
   - .github/
   - inventories/*
-  - roles/*
+  - roles/*/*/main.yml
 skip_list:
   - yaml[document-start]
