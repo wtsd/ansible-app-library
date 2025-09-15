@@ -11,5 +11,6 @@ rules:
     max-spaces-inside: 2
 ignore:
   - .github/
+  - inventories/*
 skip_list:
   - yaml[document-start]
