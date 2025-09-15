@@ -1,0 +1,17 @@
+plugin: gcp_compute
+projects:
+  - YOUR_GCP_PROJECT_ID
+zones:
+  - us-central1-a
+  - us-east1-b
+filters: []
+auth_kind: serviceaccount
+service_account_file: ~/.gcp/service-account.json
+keyed_groups:
+  - key: labels.role
+    prefix: role
+  - key: labels.env
+    prefix: env
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP or networkInterfaces[0].networkIP
+strict: False
