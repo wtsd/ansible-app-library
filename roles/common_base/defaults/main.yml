@@ -11,7 +11,7 @@ common_base_packages:
 common_extra_packages: []
 node_exporter_enabled: true
 node_exporter_version: "1.8.1"
-app_user: app
-app_group: app
+app_user: env_app
+app_group: env_app
 log_dir: /var/log/apps
 timezone: UTC
