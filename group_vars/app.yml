@@ -1,0 +1,14 @@
+---
+deploy_dir: /opt/apps
+domain_name: "example.local"
+python_app:
+  name: "flask-demo"
+  repo_url: "https://github.com/example/flask-demo.git"
+  venv_path: "/opt/venvs/flask-demo"
+  entrypoint: "wsgi:app"
+  port: 5000
+
+java_app:
+  name: "spring-demo"
+  jar_url: "https://example.org/builds/spring-demo-latest.jar"
+  port: 8080

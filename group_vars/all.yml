@@ -1,0 +1,13 @@
+---
+env: dev
+timezone: UTC
+app_user: app
+app_group: app
+use_nginx: true
+enable_firewalld: true
+node_exporter_enabled: true
+log_dir: /var/log/apps
+python_version: "3.10"
+java_package: "java-11-openjdk"
+nginx_listen_port: 80
+service_restart_on_change: true
