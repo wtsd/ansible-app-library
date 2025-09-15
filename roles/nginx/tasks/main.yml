@@ -1,3 +1,4 @@
+---
 - name: Install nginx
   ansible.builtin.package:
     name: nginx
@@ -15,4 +16,3 @@
     dest: /etc/nginx/conf.d/site.conf
     mode: "0644"
   notify: Reload nginx
-
