@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Minimal EC2 instance for Ansible demo (SSH+HTTP open)
+Parameters:
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+  InstanceType:
+    Type: String
+    Default: t3.micro
+  AmiId:
+    Type: AWS::EC2::Image::Id
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+  Env:
+    Type: String
+    Default: dev
+
+Resources:
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH/HTTP/HTTPS
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  EC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds: [ !Ref SG ]
+      Tags:
+        - Key: Name
+          Value: !Sub "ansible-app-${Env}"
+        - Key: Env
+          Value: !Ref Env
+        - Key: Role
+          Value: app
+
+Outputs:
+  PublicIP:
+    Value: !GetAtt EC2.PublicIp
+    Description: Public IP of the instance
+  InventorySnippet:
+    Value: !Sub |
+      [app]
+      ${EC2.PublicIp} ansible_user=ec2-user
+
+      [all:vars]
+      env=${Env}
+    Description: "INI inventory you can paste into a file"
