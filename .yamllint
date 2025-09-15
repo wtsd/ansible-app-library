@@ -12,7 +12,7 @@ rules:
     max-spaces-inside: 2
 ignore:
   - .github/
-  - inventories/*
   - roles/*/*/main.yml
+  - inventories/*
 skip_list:
   - yaml[document-start]
