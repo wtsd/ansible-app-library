@@ -1,0 +1,6 @@
+---
+- name: Basic OS hardening
+  hosts: all
+  become: true
+  roles:
+    - role: hardening_basics

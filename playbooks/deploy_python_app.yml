@@ -1,0 +1,10 @@
+---
+- name: Deploy Python application
+  hosts: app
+  become: true
+  roles:
+    - role: common_base
+    - role: firewall
+    - role: nginx
+      when: use_nginx | bool
+    - role: python_app
