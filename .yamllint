@@ -1,5 +1,8 @@
 ---
 extends: default
+skip_list:
+  - yaml[document-start]
+  - var-naming[no-role-prefix]
 rules:
   line-length:
     max: 180
@@ -14,6 +17,3 @@ ignore:
   - .github/
   - roles/*/*/main.yml
   - inventories/*
-skip_list:
-  - yaml[document-start]
-  - var-naming[no-role-prefix]
