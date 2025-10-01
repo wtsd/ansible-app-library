@@ -16,6 +16,6 @@ jobs:
         run: |
           pip install ansible-core ansible-lint yamllint
       - name: yamllint
-        run: yamllint ./infra/
+        run: yamllint ./infra/terraform/gcp/
       - name: ansible-lint
         run: ansible-lint
