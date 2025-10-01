@@ -25,5 +25,5 @@ jobs:
       #  run: yamllint ./inventories/
       - name: yamllint all
         run: yamllint .
-      #- name: ansible-lint
-      #  run: ansible-lint
+      - name: ansible-lint
+        run: ansible-lint
