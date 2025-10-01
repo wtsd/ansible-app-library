@@ -17,3 +17,4 @@ ignore:
   - .github/
   - roles/*/*/main.yml
   - inventories/*
+  - docs/*
