@@ -15,13 +15,15 @@ jobs:
       - name: Install tools
         run: |
           pip install ansible-core ansible-lint yamllint
-      - name: yamllint collections
-        run: yamllint ./collections/
-      - name: yamllint group_vars
-        run: yamllint ./group_vars/
-      - name: yamllint infra
-        run: yamllint ./infra/
-      - name: yamllint inventories
-        run: yamllint ./inventories/
+      #- name: yamllint collections
+      #  run: yamllint ./collections/
+      #- name: yamllint group_vars
+      #  run: yamllint ./group_vars/
+      #- name: yamllint infra
+      #  run: yamllint ./infra/
+      #- name: yamllint inventories
+      #  run: yamllint ./inventories/
+      - name: yamllint all
+        run: yamllint .
       #- name: ansible-lint
       #  run: ansible-lint
