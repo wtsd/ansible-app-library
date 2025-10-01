@@ -21,5 +21,7 @@ jobs:
         run: yamllint ./group_vars/
       - name: yamllint infra
         run: yamllint ./infra/
+      - name: yamllint inventories
+        run: yamllint ./inventories/
       #- name: ansible-lint
       #  run: ansible-lint
